@@ -1,6 +1,7 @@
 // Setup initial game stats
 let score = 0;
 let lives = 2;
+let powerpellet = 4; 
 
 
 // Define your ghosts here
@@ -33,6 +34,8 @@ const clyde = {
   edible: false
 };
 
+const ghosts = [inky, blinky, pinky, clyde]
+
 // replace this comment with your four ghosts setup as objects
 
 
@@ -51,13 +54,26 @@ function clearScreen() {
 }
 
 function displayStats() {
-  console.log(`Score: ${score}     Lives: ${lives}`);
+  console.log(`Score: ${score}     Lives: ${lives}\n\n\nPower-Pellets: ${powerpellet}`);
 }
 
 function displayMenu() {
   console.log('\n\nSelect Option:\n');  // each \n creates a new line
   console.log('(d) Eat Dot');
+  console.log('(p) Eat Power-Pellet')
+  for (i = 0; i < ghosts.length; i++) {
+    console.log(`(${i+1}) Eat ${ghosts[i].name} (${edibility(ghosts[i])})`);
+  }
   console.log('(q) Quit');
+}
+
+function edibility(ghost) {
+  if (ghost.edible === true) {
+    return 'edible'
+  }
+  else if (ghost.edible === false) {
+    return 'inedible'
+  }
 }
 
 function displayPrompt() {
@@ -72,6 +88,38 @@ function eatDot() {
   score += 10;
 }
 
+function eatGhost(ghost) {
+  if (ghost.edible === true) {
+    ghost.edible = false;
+    console.log(`Pac-Man ate ${ghost.character} ghost, ${ghost.name}.`);
+    score += 200;
+  }
+  else if (ghost.edible === false) {
+    lives-- ;
+    console.log(`\n ${ghost.name} ${ghost.colour}`);
+    gameOver();
+  }
+}
+
+function gameOver() {
+  if (lives < 0) {
+    process.exit();
+  }
+}
+
+function eatPowerPellet() {
+  if (powerpellet == 0) {
+    console.log('\n\nNo Power-Pellets left!');
+  }
+  else {
+    score += 50;
+    powerpellet--;
+    for (i = 0; i < ghosts.length; i++) {
+      ghosts[i].edible = true;
+    }
+    console.log('\nGot the power baby!');
+  }
+}
 
 // Process Player's Input
 function processInput(key) {
@@ -83,6 +131,23 @@ function processInput(key) {
     case 'd':
       eatDot();
       break;
+    case 'p':
+      eatPowerPellet();
+      break;
+    case '1':
+      eatGhost(inky);
+      break;
+    case '2':
+      eatGhost(blinky);
+      break;
+    case '3':
+      eatGhost(pinky);
+      break;
+    case '4':
+      eatGhost(clyde);
+      break;
+    case 'p':
+      eatPowerPellet();
     default:
       console.log('\nInvalid Command!');
   }
